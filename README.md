@@ -1,8 +1,6 @@
 # KonoUtilsHelpers
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/kono_utils_helpers`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Collection of Classes used in KonoUtils
 
 ## Installation
 
@@ -22,18 +20,80 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
 
-## Development
+### TmpFile
+ Classe Funzionante prettamente con RAILS
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+ La classe si occupa dei files temporanei creando una cartella dentro a tmp del progetto,
+ per ovviare al problema di duplicazioni dei nomi, viene generata una nuova cartella con
+ timestamp univoco per ogni file.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+ Estende Tempfile,
+ la root della struttura è quella di Rails.root
+ e di default la classe scrive dentro a tmp della root di rails.
 
-## Contributing
+ Non c'è bisogno di preoccuparsi di svuotare la cartella tmp contenente i file temporanei dato che la classe
+ avrà l'onere di controllare e ripulire eventuali files dopo 1.day di default.
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/kono_utils_helpers.
+#### Utilizzo:
+ tmp = KonoUtils::TmpFile.new('nomefile.ext')
+ tmp.path -> path completa
+ tmp.write(valore_da_scrivere_dentro_a_file)
+ tmp.original_filename -> restituisce il nome inizialmente passato alla classe
+ tmp.unique_filename   -> restoituisce il nome univoco del file
+ tmp.path              -> restituisce la path del file
 
-## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+### Encoder
+ Classe che si occupa di decodificare una qualsiasi stringa in formato utf8,
+ cercando di trovare l'encoding iniziale a tentativi.
+ Ha anche a disposizione una funzione per la rimozione dei caratteri BOM dalla stringa(http://en.wikipedia.org/wiki/Byte_order_mark)
+
+#### Utilizzo
+ str="stringa di un encoding sconosciuto"
+ en = KonoUtils::Encoder.new(str)
+ en.string_encoder  -> normale tentativo di encoding restituendo stringa in utf8
+ en.remove_bom      -> rimozione del carattere BOM e encoding con la funzione precedente
+
+### Percentage
+ Classe che si occupa di rappresentare un numero in percentuale.
+ Per maggiori info sulle funzionalità controllare la documentazione sulla classe
+
+#### Utilizzo
+ p = KonoUtils::Percentage.new(100,20)
+ p.percentage -> ritorna il valore percentuale float
+ p.to_i -> ritorna percentuale intera con relativi arrotondamenti
+ p.to_percentage -> si comporta come l'helper number_to_percentage
+
+### Params Hash Array
+
+ Si occupa di trasformare un hash con elementi che sono chiramente array in un hash con elementi array:
+
+ {"DatiOrdineAcquisto"=>{"0"=>{"RiferimentoNumeroLinea"=>{"0"=>""}, "IdDocumento"=>"", "Data"=>"", "NumItem"=>"", "CodiceCommessaConvenzione"=>"", "CodiceCUP"=>"", "CodiceCIG"=>""}}}
+ {"DatiOrdineAcquisto"=>[{"RiferimentoNumeroLinea"=>[""], "IdDocumento"=>"", "Data"=>"", "NumItem"=>"", "CodiceCommessaConvenzione"=>"", "CodiceCUP"=>"", "CodiceCIG"=>""}]}
+
+#### Utilizzo
+ includere nel controller o dove si vuole utilizzare il concern
+ include KonoUtils::ParamsHashArray
+
+ e richiamare la funzione:
+ elaborate_params_to_hash_array(params)
+
+### Virtual Model
+ Server per avere un modello virtuale in Rails
+
+#### Utilizzo
+  Praticamente è come avere un active record ma senza avere una tabella
+
+  class Session < KonoUtils::VirtualModel
+
+    attr_accessor :username, :password, :token
+
+
+    validates :token,:presence=>true
+
+  end
+
+  Session.new(:username=>'ciao',:password=>'pippo').valid? => false
+
