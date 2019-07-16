@@ -36,12 +36,14 @@ Or install it yourself as:
  avrà l'onere di controllare e ripulire eventuali files dopo 1.day di default.
 
 #### Utilizzo:
+```ruby 
  tmp = KonoUtils::TmpFile.new('nomefile.ext')
  tmp.path -> path completa
  tmp.write(valore_da_scrivere_dentro_a_file)
  tmp.original_filename -> restituisce il nome inizialmente passato alla classe
  tmp.unique_filename   -> restoituisce il nome univoco del file
  tmp.path              -> restituisce la path del file
+```
 
 
 
@@ -69,9 +71,10 @@ Or install it yourself as:
 ### Params Hash Array
 
  Si occupa di trasformare un hash con elementi che sono chiramente array in un hash con elementi array:
-
+```
  {"DatiOrdineAcquisto"=>{"0"=>{"RiferimentoNumeroLinea"=>{"0"=>""}, "IdDocumento"=>"", "Data"=>"", "NumItem"=>"", "CodiceCommessaConvenzione"=>"", "CodiceCUP"=>"", "CodiceCIG"=>""}}}
  {"DatiOrdineAcquisto"=>[{"RiferimentoNumeroLinea"=>[""], "IdDocumento"=>"", "Data"=>"", "NumItem"=>"", "CodiceCommessaConvenzione"=>"", "CodiceCUP"=>"", "CodiceCIG"=>""}]}
+```
 
 #### Utilizzo
  includere nel controller o dove si vuole utilizzare il concern
@@ -85,6 +88,7 @@ Or install it yourself as:
 
 #### Utilizzo
   Praticamente è come avere un active record ma senza avere una tabella
+```ruby
 
   class Session < KonoUtils::VirtualModel
 
@@ -97,3 +101,4 @@ Or install it yourself as:
 
   Session.new(:username=>'ciao',:password=>'pippo').valid? => false
 
+```
