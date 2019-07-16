@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'tempfile'
 module KonoUtils
   ##
   # Classe Funzionante prettamente con RAILS
@@ -18,10 +19,10 @@ module KonoUtils
   # tmp.unique_filename.......
   #
   #
-  class TmpFile < Tempfile
+  class TmpFile < ::Tempfile
 
     PATH = 'tmp/ptmpfile'
-    TIME_LIMIT = 1.day
+    TIME_LIMIT = 1*60*60*24 # 1day
     attr_accessor :root_dir
     attr_accessor :tmp_dir
     attr_accessor :original_filename, :unique_filename
