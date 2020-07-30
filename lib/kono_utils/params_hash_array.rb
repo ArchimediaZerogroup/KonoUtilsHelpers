@@ -28,7 +28,7 @@ module KonoUtils
           end
         end
 
-        Rails.logger.debug "DEBUG #{out.inspect}"
+        Rails.logger.debug { "DEBUG #{out.inspect}" }
         out
       end
     end
