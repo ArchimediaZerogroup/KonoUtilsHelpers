@@ -10,8 +10,11 @@ module KonoUtils
       tmp.write('ciao')
       tmp.fsync
       tmp.close
-      expect(File.exist?(path)).to be_truthy
-      TmpFile.new('new_file.ext')
+      # sostituendo la variabile con un nuovo oggetto, l'oggetto principale iniziale finisce nel
+      # garbage collector
+      tmp = TmpFile.new('new_file.ext')
+      GC.start
+      expect(File.exist?(tmp.path)).to be_truthy
       expect(File.exist?(path)).to be_truthy
 
     end
@@ -20,16 +23,19 @@ module KonoUtils
 
       freeze_time
       tmp = TmpFile.new('nomefile.ext')
-      expect(File.exist?(tmp.path)).to be_truthy
-      travel_to(Time.now + TmpFile::TIME_LIMIT)
-      nuovo = TmpFile.new('NEWnomefile.ext')
-      expect(File.exist?(tmp.path)).to be_truthy
-      expect(File.exist?(nuovo.path)).to be_truthy
+      tmp_path = tmp.path
+      expect(File.exist?(tmp_path)).to be_truthy
+      travel_to(Time.now + TmpFile::TIME_LIMIT-10)
+      tmp = TmpFile.new('NEWnomefile.ext')
+      nuovo_path = tmp.path
+      expect(File.exist?(tmp_path)).to be_truthy
+      expect(File.exist?(nuovo_path)).to be_truthy
       travel_to(Time.now + 1)
-      nuovo2 = TmpFile.new('NEWnomefile.ext')
-      expect(File.exist?(tmp.path)).not_to be_truthy
-      expect(File.exist?(nuovo.path)).to be_truthy
-      expect(File.exist?(nuovo2.path)).to be_truthy
+      tmp = TmpFile.new('NEWnomefile.ext')
+      nuovo2_path = tmp.path
+      expect(File.exist?(tmp_path)).to be_falsey
+      expect(File.exist?(nuovo_path)).to be_truthy
+      expect(File.exist?(nuovo2_path)).to be_truthy
       travel_back
 
     end
