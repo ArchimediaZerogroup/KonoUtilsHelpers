@@ -25,7 +25,7 @@ module KonoUtils
       tmp = TmpFile.new('nomefile.ext')
       tmp_path = tmp.path
       expect(File.exist?(tmp_path)).to be_truthy
-      travel_to(Time.now + TmpFile::TIME_LIMIT-10)
+      travel_to(Time.now + TmpFile::TIME_LIMIT)
       tmp = TmpFile.new('NEWnomefile.ext')
       nuovo_path = tmp.path
       expect(File.exist?(tmp_path)).to be_truthy
