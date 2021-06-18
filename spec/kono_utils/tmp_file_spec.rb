@@ -3,6 +3,16 @@ require_relative '../spec_helper'
 module KonoUtils
   RSpec.describe TmpFile do
 
+    it "respond to unlink" do
+
+      tmp = TmpFile.new('nomefile.ext')
+      expect(tmp).to respond_to(:unlink)
+      expect {
+        tmp.unlink
+      }.not_to raise_error
+
+    end
+
     it "alla fine dell'utilizzo il file non viene cancellato" do
 
       tmp = TmpFile.new('nomefile.ext')

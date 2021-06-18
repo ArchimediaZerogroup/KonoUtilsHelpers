@@ -53,6 +53,14 @@ module KonoUtils
 
     delegate_missing_to :@tmp_file
 
+    def unlink
+      File.unlink(@tmp_file.path)
+    rescue Errno::ENOENT
+    rescue Errno::EACCES
+      # may not be able to unlink on Windows; just ignore
+      return
+    end
+
     private
 
     ##
