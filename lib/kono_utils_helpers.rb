@@ -1,5 +1,3 @@
-require "kono_utils"
-
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
 loader.enable_reloading # you need to opt-in before setup

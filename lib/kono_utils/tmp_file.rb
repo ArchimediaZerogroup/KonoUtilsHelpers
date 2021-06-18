@@ -12,7 +12,7 @@ module KonoUtils
   # la prossima volta che viene chiamata cancellando tutti i files con un TTL
   # maggiore di 1.day di default
   ## Utilizzo:
-  # tmp = Ptmpfile.new('nomefile.ext')
+  # tmp = TmpFile.new('nomefile.ext')
   # tmp.path -> path completa
   # tmp.write.....
   # tmp.original_filename.......
@@ -59,10 +59,17 @@ module KonoUtils
     #   - Dir
     #
     def controll_root
-      unless File.exist?(::Rails.root.join(PATH))
-        Dir.mkdir(::Rails.root.join(PATH))
+      root = '/'
+      if defined?("::Rails")
+        if Rails.respond_to?(:root)
+          root = ::Rails.root
+        end
       end
-      Dir.open(::Rails.root.join(PATH))
+      root = File.join(root, PATH)
+      unless File.exist?(root)
+        Dir.mkdir(root)
+      end
+      Dir.open(root)
     end
 
     ##
@@ -70,8 +77,9 @@ module KonoUtils
     #
     def clean_tmpdir
       self.root_dir.each do |d|
-        if d != '..' and d!='.'
-          if d.to_i < Time.now.to_i-TIME_LIMIT
+        # controlliamo il nome del file. in quanto il nome del file coincide al Time.now
+        if d != '..' and d != '.'
+          if d.to_i < Time.now.to_i - TIME_LIMIT
             FileUtils.rm_rf(File.join(self.root_dir.path, d))
           end
         end
